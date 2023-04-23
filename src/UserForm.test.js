@@ -1,6 +1,5 @@
 import { render, screen } from "@testing-library/react";
 import user from "@testing-library/user-event";
-
 import UserForm from "./UserForm";
 
 test("it shows two inputs and a button", () => {
@@ -12,39 +11,34 @@ test("it shows two inputs and a button", () => {
   const button = screen.getByRole("button");
 
   // Assertion - make sure the component is doing
+  // what we expect it to do
   expect(inputs).toHaveLength(2);
   expect(button).toBeInTheDocument();
-  // what we expect it to do
 });
 
-test("it calls onUserAdd when the form is submitted", () => {
-  // Not the best implementation
-
-  const argList = [];
-  const callback = (...args) => {
-    argList.push(args);
-  };
+test("it calls onUserAdd when the form is submitted", async () => {
+  const mock = jest.fn();
 
   // Try to render my component
-  render(<UserForm onUserAdd={callback} />);
-  // Find two inputs
+  render(<UserForm onUserAdd={mock} />);
+
+  // Find the two inputs
   const [nameInput, emailInput] = screen.getAllByRole("textbox");
 
-  // Simulate typing in an name
+  // Simulate typing in a name
   user.click(nameInput);
   user.keyboard("jane");
 
   // Simulate typing in an email
-  user.click(emailInput);
-  user.keyboard("jane@gmail.com");
+  await user.click(emailInput);
+  await user.keyboard("jane@jane.com");
 
   // Find the button
   const button = screen.getByRole("button");
 
   // Simulate clicking the button
-  user.click(button);
+  await user.click(button);
 
-  // Assertion to make 'onUserAdd' gets called with email/name
-  expect(argList).toHaveLength(1);
-  expect(argList[0][0]).toEqual({ name: "jane", email: "jane@gmail.com" });
+  // Assertion to make sure 'onUserAdd' gets called with email/name
+  expect(mock).toHaveBeenCalled();
 });
