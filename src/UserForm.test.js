@@ -48,3 +48,24 @@ test("it calls onUserAdd when the form is submitted", async () => {
     email: "jane@gmail.com",
   });
 });
+test("emplties the two input when the form is submitted", async () => {
+  render(<UserForm onUserAdd={() => {}} />);
+
+  // Find the two inputs
+  const nameInput = screen.getByRole("textbox", { name: /name/i });
+  const emailInput = screen.getByRole("textbox", { name: /email/i });
+
+  // Simulate typing in a name
+  await user.click(nameInput);
+  await user.keyboard("jane");
+
+  // Simulate typing in an email
+  await user.click(emailInput);
+  await user.keyboard("jane@gmail.com");
+
+  const button = screen.getByRole("button");
+  await user.click(button);
+
+  expect(nameInput).toHaveValue("");
+  expect(emailInput).toHaveValue("");
+});
